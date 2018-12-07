@@ -14,4 +14,4 @@ Version 1.2.0 - Last update: 06/Dec/2018
 
 ## Authors
 
-* **Juan Sebastian Bedoya Piedrahita**
+* **Juan Sebastian Bedoya Piedrahita (Extibax)**
