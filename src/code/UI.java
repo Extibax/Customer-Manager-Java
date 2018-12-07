@@ -79,9 +79,7 @@ public final class UI extends javax.swing.JFrame {
      */
     public UI() throws AWTException, SQLException, ClassNotFoundException, FileNotFoundException {
 
-        MyServerSocket serverSocket = new MyServerSocket();
-        serverSocket.MyServerSocket(this);
-        serverSocket.start();
+        IsRunningOrNot.checkIfRunning();
         setState(ICONIFIED);
         initComponents();
         MyConnection.DatabaseCustomers(MyConnection.get());
@@ -151,7 +149,9 @@ public final class UI extends javax.swing.JFrame {
             }
 
         } catch (SQLException e) {
+            
             System.out.println(e);
+            
         }
 
     }
@@ -200,7 +200,9 @@ public final class UI extends javax.swing.JFrame {
             }
 
         } catch (SQLException e) {
+            
             System.out.println(e);
+            
         }
 
     }
@@ -412,7 +414,9 @@ public final class UI extends javax.swing.JFrame {
             pathPdf = j.getSelectedFile().getAbsolutePath();
 
         } else {
-
+            
+            //Do nothing
+            
         }
     }
 
@@ -547,7 +551,9 @@ public final class UI extends javax.swing.JFrame {
             }
 
         } catch (HeadlessException e) {
+            
             //Do nothing
+            
         }
     }
 
@@ -581,12 +587,15 @@ public final class UI extends javax.swing.JFrame {
     void removeCustomerPdf(Connection myConecction, String nombreclienteid) {
 
         try {
+            
             PreparedStatement pst = myConecction.prepareStatement("DELETE FROM PDF "
                     + "WHERE nombreclienteid = '" + nombreclienteid + "'");
             pst.executeUpdate();
 
         } catch (SQLException e) {
+            
             JOptionPane.showMessageDialog(null, e);
+            
         }
     }
 
@@ -602,6 +611,7 @@ public final class UI extends javax.swing.JFrame {
     public void insertObligation(Connection myConecction, String obligacionI, String fechaI, String horaI, String sendI) {
 
         try {
+            
             Statement miStatement = myConecction.createStatement();
             PreparedStatement pstmt = myConecction.prepareStatement("INSERT INTO Obligaciones"
                     + " (nombreclienteid, nombrecliente, obligacion, fecha, hora, send) VALUES (?, ?, ?, ?, ?, ?)");
@@ -615,7 +625,9 @@ public final class UI extends javax.swing.JFrame {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
+            
             System.out.println(e);
+            
         }
     }
 
@@ -659,6 +671,7 @@ public final class UI extends javax.swing.JFrame {
                         personButtonLoad.setForeground(new Color(13, 193, 67));
 
                     }
+                    
                     personButtonLoad.setText(miRs.getString("obligacion")
                             + " (" + miRs.getString("fecha") + ")");
                     GridBagConstraints c = new GridBagConstraints();
@@ -670,12 +683,15 @@ public final class UI extends javax.swing.JFrame {
                     pnlBandejaObligaciones.add(personButtonLoad, c);
                     pnlBandejaObligaciones.revalidate();
                     pnlBandejaObligaciones.repaint();
+                    
                 }
 
             }
 
         } catch (SQLException e) {
+            
             System.out.println(e);
+            
         }
     }
 
@@ -716,7 +732,9 @@ public final class UI extends javax.swing.JFrame {
             dialogObligacion.setLocationRelativeTo(pnlBoxShowC);
             
         } catch (Exception e) {
+            
             System.out.println(e);
+            
         }
 
     }
@@ -809,7 +827,9 @@ public final class UI extends javax.swing.JFrame {
 
             }
         } catch (HeadlessException e) {
+            
             //Do nothing
+            
         }
     }
 
