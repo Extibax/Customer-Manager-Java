@@ -132,8 +132,8 @@ public final class UI extends javax.swing.JFrame {
                         numeroContacto, cedulaRepLegal, nit, noContribuyenteMuniPa, contraMuniPa);
 
                 PersonAction pa = new PersonAction(UI.this, person);
-                CustomButton jb = new CustomButton(pa);
-                jb.setText(name);
+                CustomButton customButton = new CustomButton(pa);
+                customButton.setText(name);
 
                 iterator++;
 
@@ -144,7 +144,7 @@ public final class UI extends javax.swing.JFrame {
                 c.insets = new Insets(3, 10, 3, 10);
                 c.gridy = iterator;
                 c.gridx = 0;
-                pnlBandeja.add(jb, c);
+                pnlBandeja.add(customButton, c);
                 pnlBandeja.revalidate();
                 pnlBandeja.repaint();
 
