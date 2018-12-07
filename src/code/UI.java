@@ -4733,8 +4733,6 @@ public final class UI extends javax.swing.JFrame {
             String userTime = lblShowHora.getText();
             Date dateShowed = FormatterDate.parse(userDate + " " + userTime);
 
-            System.out.println(dateShowed);
-
             LocalDate date = dateShowed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             LocalTime time = LocalDateTime.ofInstant(dateShowed.toInstant(), ZoneId.systemDefault()).toLocalTime();
             LocalDateTime dateTime = LocalDateTime.of(date, time);
