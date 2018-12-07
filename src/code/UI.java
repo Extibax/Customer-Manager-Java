@@ -131,8 +131,8 @@ public final class UI extends javax.swing.JFrame {
                 Person person = new Person(id, name, ruc, repLegal, nombreContactoEmpresa, correoContactoEmpresa,
                         numeroContacto, cedulaRepLegal, nit, noContribuyenteMuniPa, contraMuniPa);
 
-                PersonAction pa = new PersonAction(UI.this, person);
-                CustomButton customButton = new CustomButton(pa);
+                PersonAction personAction = new PersonAction(UI.this, person);
+                CustomButton customButton = new CustomButton(personAction);
                 customButton.setText(name);
 
                 iterator++;
