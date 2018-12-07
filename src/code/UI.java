@@ -4055,7 +4055,7 @@ public final class UI extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(20, 80, 40, 60);
         pnlContenedorBandeja.add(scrollPaneCustomers, gridBagConstraints);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Webp.net-resizeimage (1).gif"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logoPantallaInicial.gif"))); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
