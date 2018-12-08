@@ -6,7 +6,7 @@ CustomerManager es un administrador de clientes el cual tiene como objetivo agru
 
 ## Installing
 
-Si desea correr el proyecto tendra que cargar las librerias externas que se utilizan las cuales estan almacenadas en la carpeta 'lib'
+Si desea correr el proyecto tendra que cargar las librerias externas que se utilizan las cuales estan almacenadas en la carpeta 'lib' o tambien puede ir a la carpeta 'dist' la cual contiene el proyecto ya listo para ser ejecutado
 
 ## Version of Customer Manager
 
