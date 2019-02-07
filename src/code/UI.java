@@ -1,5 +1,6 @@
 package code;
 
+/* Imports */
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePickerSettings;
 import java.awt.AWTException;
@@ -258,7 +259,7 @@ public final class UI extends javax.swing.JFrame {
     }
 
     /**
-     * Metodo que inseta los datos del nuevo cliente a la Base de datos SQLite
+     * Metodo que inserta los datos del nuevo cliente a la Base de datos SQLite
      *
      * @param myConnection
      * @param nameI
