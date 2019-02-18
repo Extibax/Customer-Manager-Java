@@ -61,13 +61,12 @@ import javax.swing.text.StyledDocument;
  */
 public final class UI extends javax.swing.JFrame {
 
-    public ImageIcon icono;
-    String pathPdf = "";
-    int ss, mm, hh;
-    public int idObligaciones = 0;
     HiddenIcon hiddenIcon = new HiddenIcon();
     Properties p = new Properties();
     Date checkDate;
+    
+    int obligationID = 0;
+    String pdfPath = "";
 
     /**
      *
@@ -79,21 +78,29 @@ public final class UI extends javax.swing.JFrame {
      * tiempo
      */
     public UI() throws AWTException, SQLException, ClassNotFoundException, FileNotFoundException {
-
+        
         IsRunningOrNot.checkIfRunning();
-        setState(ICONIFIED);
-        initComponents();
+        
+        //Connections
         MyConnection.DatabaseCustomers(MyConnection.get());
         MyConnection.DatabasePdf(MyConnection.get());
         MyConnection.DatabaseObligation(MyConnection.get());
+        
+        setState(ICONIFIED);
+        initComponents();
+        
         loadPnlCustomers(MyConnection.get(), "");
+        
+        reminders(MyConnection.get());
+        
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/img/logo.jpg")));
+        
         btnGuardarCambiosShowC.setVisible(false);
         btnCancelarShowC.setVisible(false);
         btnGuardarPdfShowC.setVisible(false);
         btnCancelarPdfShowC.setVisible(false);
-        reminders(MyConnection.get());
+        
         hiddenIcon.run(this);
         hiddenIcon.start();
 
@@ -109,29 +116,33 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            Statement miStatement = myConnection.createStatement();
-            ResultSet miRs = miStatement.executeQuery("SELECT * FROM customers WHERE name LIKE '%" + nameSearch + "%'");
+            Statement stmt = myConnection.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM customers WHERE name LIKE '%" + nameSearch + "%'");
             int iterator = 1;
 
-            while (miRs.next()) {
+            while (resultSet.next()) {
 
-                int id = miRs.getInt("id");
-                String name = miRs.getString("name");
-                String ruc = miRs.getString("ruc");
-                String repLegal = miRs.getString("repLegal");
-                String nombreContactoEmpresa = miRs.getString("nombreContactoEmpresa");
-                String correoContactoEmpresa = miRs.getString("correoContactoEmpresa");
-                String numeroContacto = miRs.getString("numeroContacto");
-                String cedulaRepLegal = miRs.getString("cedulaRepLegal");
-                String nit = miRs.getString("nit");
-                String noContribuyenteMuniPa = miRs.getString("noContribuyenteMuniPa");
-                String contraMuniPa = miRs.getString("contraMuniPa");
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String ruc = resultSet.getString("ruc");
+                String repLegal = resultSet.getString("repLegal");
+                String nombreContactoEmpresa = resultSet.getString("nombreContactoEmpresa");
+                String correoContactoEmpresa = resultSet.getString("correoContactoEmpresa");
+                String numeroContacto = resultSet.getString("numeroContacto");
+                String cedulaRepLegal = resultSet.getString("cedulaRepLegal");
+                String nit = resultSet.getString("nit");
+                String noContribuyenteMuniPa = resultSet.getString("noContribuyenteMuniPa");
+                String contraMuniPa = resultSet.getString("contraMuniPa");
 
-                Person person = new Person(id, name, ruc, repLegal, nombreContactoEmpresa, correoContactoEmpresa,
-                        numeroContacto, cedulaRepLegal, nit, noContribuyenteMuniPa, contraMuniPa);
+                Person person 
+                = new Person(id, name, ruc, repLegal, nombreContactoEmpresa, correoContactoEmpresa,
+                numeroContacto, cedulaRepLegal, nit, noContribuyenteMuniPa, contraMuniPa);
 
-                PersonAction personAction = new PersonAction(UI.this, person);
-                CustomButton customButton = new CustomButton(personAction);
+                PersonAction personAction 
+                = new PersonAction(UI.this, person);
+                CustomButton customButton 
+                = new CustomButton(personAction);
+                
                 customButton.setText(name);
 
                 iterator++;
@@ -169,22 +180,22 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            Statement miStatement = myConnection.createStatement();
-            ResultSet miRs = miStatement.executeQuery("SELECT * FROM customers WHERE id = '" + idPerson + "'");
+            Statement stmt = myConnection.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM customers WHERE id = '" + idPerson + "'");
 
-            while (miRs.next()) {
+            while (resultSet.next()) {
 
-                int id = miRs.getInt("id");
-                String name = miRs.getString("name");
-                String ruc = miRs.getString("ruc");
-                String repLegal = miRs.getString("repLegal");
-                String nombreContactoEmpresa = miRs.getString("nombreContactoEmpresa");
-                String correoContactoEmpresa = miRs.getString("correoContactoEmpresa");
-                String numeroContacto = miRs.getString("numeroContacto");
-                String cedulaRepLegal = miRs.getString("cedulaRepLegal");
-                String nit = miRs.getString("nit");
-                String noContribuyenteMuniPa = miRs.getString("noContribuyenteMuniPa");
-                String contraMuniPa = miRs.getString("contraMuniPa");
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String ruc = resultSet.getString("ruc");
+                String repLegal = resultSet.getString("repLegal");
+                String nombreContactoEmpresa = resultSet.getString("nombreContactoEmpresa");
+                String correoContactoEmpresa = resultSet.getString("correoContactoEmpresa");
+                String numeroContacto = resultSet.getString("numeroContacto");
+                String cedulaRepLegal = resultSet.getString("cedulaRepLegal");
+                String nit = resultSet.getString("nit");
+                String noContribuyenteMuniPa = resultSet.getString("noContribuyenteMuniPa");
+                String contraMuniPa = resultSet.getString("contraMuniPa");
 
                 lblIDCustomers.setText(String.valueOf(id));
                 lblNameShowC.setText(name);
@@ -220,22 +231,21 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            Statement miStatement = myConnection.createStatement();
-            ResultSet miRs = miStatement.executeQuery("SELECT * FROM customers WHERE id = '" + idCostumers + "'");
+            Statement stmt = myConnection.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM customers WHERE id = '" + idCostumers + "'");
 
-            while (miRs.next()) {
-
-                int id = miRs.getInt("id");
-                String name = miRs.getString("name");
-                String ruc = miRs.getString("ruc");
-                String repLegal = miRs.getString("repLegal");
-                String nombreContactoEmpresa = miRs.getString("nombreContactoEmpresa");
-                String correoContactoEmpresa = miRs.getString("correoContactoEmpresa");
-                String numeroContacto = miRs.getString("numeroContacto");
-                String cedulaRepLegal = miRs.getString("cedulaRepLegal");
-                String nit = miRs.getString("nit");
-                String noContribuyenteMuniPa = miRs.getString("noContribuyenteMuniPa");
-                String contraMuniPa = miRs.getString("contraMuniPa");
+            while (resultSet.next()) {
+                
+                String name = resultSet.getString("name");
+                String ruc = resultSet.getString("ruc");
+                String repLegal = resultSet.getString("repLegal");
+                String nombreContactoEmpresa = resultSet.getString("nombreContactoEmpresa");
+                String correoContactoEmpresa = resultSet.getString("correoContactoEmpresa");
+                String numeroContacto = resultSet.getString("numeroContacto");
+                String cedulaRepLegal = resultSet.getString("cedulaRepLegal");
+                String nit = resultSet.getString("nit");
+                String noContribuyenteMuniPa = resultSet.getString("noContribuyenteMuniPa");
+                String contraMuniPa = resultSet.getString("contraMuniPa");
 
                 txtNombreEditC.setText(name);
                 txtRucEditC.setText(ruc);
@@ -279,10 +289,12 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            PreparedStatement pstmt = myConnection.prepareStatement("INSERT INTO customers"
-                    + " (name, ruc, repLegal, nombreContactoEmpresa, correoContactoEmpresa, "
-                    + "numeroContacto, cedulaRepLegal, nit, noContribuyenteMuniPa,"
-                    + "contraMuniPa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement pstmt 
+            = myConnection.prepareStatement(
+                "INSERT INTO customers "
+                + "(name, ruc, repLegal, nombreContactoEmpresa, correoContactoEmpresa, "
+                + "numeroContacto, cedulaRepLegal, nit, noContribuyenteMuniPa,"
+                + "contraMuniPa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             pstmt.setString(1, nameI);
             pstmt.setString(2, rucI);
@@ -313,8 +325,8 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            PreparedStatement pst = myConnection.prepareStatement("DELETE FROM customers "
-                    + "WHERE id = '" + idCustomers + "'");
+            PreparedStatement pst 
+            = myConnection.prepareStatement("DELETE FROM customers WHERE id = '" + idCustomers + "'");
             pst.executeUpdate();
 
         } catch (SQLException e) {
@@ -328,22 +340,22 @@ public final class UI extends javax.swing.JFrame {
      * Metodo que guarda los cambios hechos en el pnlEditCustomers
      *
      * @param myConnection
-     * @param idCustomers
+     * @param customerID
      */
-    public void updateCustomers(Connection myConnection, int idCustomers) {
+    public void updateCustomers(Connection myConnection, int customerID) {
 
         String sql = "UPDATE customers SET "
-                + "name ='" + txtNombreEditC.getText() + "' "
-                + ",ruc ='" + txtRucEditC.getText() + "' "
-                + ",repLegal ='" + txtRepLegalEditC.getText() + "' "
-                + ",nombreContactoEmpresa ='" + txtNombreContactoEditC.getText() + "' "
-                + ",correoContactoEmpresa ='" + txtCorreoEditC.getText() + "' "
-                + ",numeroContacto ='" + txtNumeroContactoEditC.getText() + "' "
-                + ",cedulaRepLegal ='" + txtCedulaRepEditC.getText() + "' "
-                + ",nit ='" + txtNitEditC.getText() + "' "
-                + ",noContribuyenteMuniPa ='" + txtNoContribuyenteEditC.getText() + "' "
-                + ",contraMuniPa ='" + txtContraseñaEditC.getText() + "' "
-                + "WHERE id = '" + idCustomers + "'";
+                + "name ='"                     + txtNombreEditC.getText() + "' "
+                + ",ruc ='"                     + txtRucEditC.getText() + "' "
+                + ",repLegal ='"                + txtRepLegalEditC.getText() + "' "
+                + ",nombreContactoEmpresa ='"   + txtNombreContactoEditC.getText() + "' "
+                + ",correoContactoEmpresa ='"   + txtCorreoEditC.getText() + "' "
+                + ",numeroContacto ='"          + txtNumeroContactoEditC.getText() + "' "
+                + ",cedulaRepLegal ='"          + txtCedulaRepEditC.getText() + "' "
+                + ",nit ='"                     + txtNitEditC.getText() + "' "
+                + ",noContribuyenteMuniPa ='"   + txtNoContribuyenteEditC.getText() + "' "
+                + ",contraMuniPa ='"            + txtContraseñaEditC.getText() + "' "
+                + "WHERE id = '" + customerID + "'";
 
         try {
 
@@ -371,23 +383,25 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            PreparedStatement pstmt = myConnection.prepareStatement("SELECT archivopdf FROM PDF WHERE nombrepdf = '" + nombrePDF + "'");
-            ResultSet miResultSet;
-            miResultSet = pstmt.executeQuery();
+            PreparedStatement pstmt 
+            = myConnection.prepareStatement("SELECT archivopdf FROM PDF WHERE nombrepdf = '" + nombrePDF + "'");
+            
+            ResultSet resultset 
+            = pstmt.executeQuery();
 
-            while (miResultSet.next()) {
+            while (resultset.next()) {
 
-                bite = miResultSet.getBytes("archivopdf");
+                bite = resultset.getBytes("archivopdf");
 
             }
             try (InputStream bos = new ByteArrayInputStream(bite)) {
 
-                int tamanoInput = bos.available();
-                byte[] datosPDF = new byte[tamanoInput];
-                bos.read(datosPDF, 0, tamanoInput);
+                int inputSize = bos.available();
+                byte[] pdfData = new byte[inputSize];
+                bos.read(pdfData, 0, inputSize);
                 try (OutputStream out = new FileOutputStream("new.pdf")) {
 
-                    out.write(datosPDF);
+                    out.write(pdfData);
 
                 }
             }
@@ -403,16 +417,16 @@ public final class UI extends javax.swing.JFrame {
      */
     public void selectPdf() {
 
-        JFileChooser j = new JFileChooser();
-        FileNameExtensionFilter fi = new FileNameExtensionFilter("pdf", "pdf");
-        j.setFileFilter(fi);
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("pdf", "pdf");
+        fileChooser.setFileFilter(extensionFilter);
 
-        int se = j.showOpenDialog(this);
+        int selected = fileChooser.showOpenDialog(this);
 
-        if (se == 0) {
+        if (selected == 0) {
 
-            btnSeleccionarPdf.setText("" + j.getSelectedFile().getName());
-            pathPdf = j.getSelectedFile().getAbsolutePath();
+            btnSeleccionarPdf.setText("" + fileChooser.getSelectedFile().getName());
+            pdfPath = fileChooser.getSelectedFile().getAbsolutePath();
 
         } else {
             
@@ -432,23 +446,23 @@ public final class UI extends javax.swing.JFrame {
      */
     public void savePdf(String nombre, File ruta) throws SQLException, ClassNotFoundException, ClassNotFoundException, ClassNotFoundException, ClassNotFoundException {
 
-        PdfGet gets = new PdfGet();
-        gets.setNombrepdf(nombre);
+        PdfGet getPDF = new PdfGet();
+        getPDF.setNombrepdf(nombre);
 
         try {
 
-            byte[] pdf = new byte[(int) ruta.length()];
+            byte[] bite = new byte[(int) ruta.length()];
 
             InputStream input = new FileInputStream(ruta);
-            input.read(pdf);
+            input.read(bite);
 
-            gets.setArchivopdf(pdf);
+            getPDF.setArchivopdf(bite);
 
-            insertPdf(MyConnection.get(), gets);
+            insertPdf(MyConnection.get(), getPDF);
 
         } catch (IOException ex) {
 
-            gets.setArchivopdf(null);
+            getPDF.setArchivopdf(null);
 
         }
 
@@ -465,10 +479,11 @@ public final class UI extends javax.swing.JFrame {
     public void insertPdf(Connection myConnection, PdfGet vo) {
 
         try {
-
-            Statement miStatement = myConnection.createStatement();
-            PreparedStatement pstmt = myConnection.prepareStatement("INSERT INTO PDF (nombreclienteid ,nombrepdf, "
-                    + "archivopdf) VALUES(?, ?, ?);");
+            
+            PreparedStatement pstmt 
+            = myConnection.prepareStatement(
+                "INSERT INTO PDF (nombreclienteid ,nombrepdf, archivopdf) VALUES(?, ?, ?);");
+            
             pstmt.setString(1, lblIDCustomers.getText() + lblNameShowC.getText());
             pstmt.setString(2, vo.getNombrepdf());
             pstmt.setBytes(3, vo.getArchivopdf());
@@ -491,29 +506,32 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            Statement miStatement = myConnection.createStatement();
-            ResultSet miRs = miStatement.executeQuery("SELECT * FROM PDF "
+            Statement stmt = myConnection.createStatement();
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM PDF "
                     + "WHERE nombreclienteid = '" + nombreClienteId + "'");
-            int iterator2 = 1;
+            int iterator = 1;
 
-            while (miRs.next()) {
+            while (resultSet.next()) {
 
-                Pdf personLoadPdf = new Pdf(miRs.getString("nombreclienteid"),
-                        miRs.getString("nombrepdf"), miRs.getBytes("archivopdf"));
+                Pdf personLoadPdf = new Pdf(resultSet.getString("nombreclienteid"),
+                        resultSet.getString("nombrepdf"), resultSet.getBytes("archivopdf"));
 
-                PdfAction pa = new PdfAction(UI.this, personLoadPdf);
+                PdfAction pdfAction = new PdfAction(UI.this, personLoadPdf);
 
-                CustomButton personButtonLoad = new CustomButton(pa);
-                personButtonLoad.setText(miRs.getString("nombrepdf"));
+                CustomButton personButtonLoad = new CustomButton(pdfAction);
+                personButtonLoad.setText(resultSet.getString("nombrepdf"));
                 personButtonLoad.setComponentPopupMenu(jPopMenuBtn);
 
                 GridBagConstraints c = new GridBagConstraints();
-                iterator2++;
+                
+                iterator++;
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.weightx = 2.0;
                 c.insets = new Insets(3, 10, 3, 10);
-                c.gridy = iterator2;
-                personButtonLoad.setName(String.valueOf(miRs.getInt("id")));
+                c.gridy = iterator;
+                
+                personButtonLoad.setName(String.valueOf(resultSet.getInt("id")));
+                
                 pnlBandejaPdf.add(personButtonLoad, c);
                 pnlBandejaPdf.revalidate();
                 pnlBandejaPdf.repaint();
@@ -531,16 +549,15 @@ public final class UI extends javax.swing.JFrame {
     public void updatePdfWithNameid(Connection myConnection, String nombreclienteid, String nuevonombre) {
 
         String sql = "UPDATE PDF SET "
-                + "nombreclienteid ='" + lblIDCustomers.getText() + nuevonombre + "' "
-                + "WHERE nombreclienteid = '" + nombreclienteid + "'";
+                + "nombreclienteid = '"          + lblIDCustomers.getText() + nuevonombre + "' "
+                + "WHERE nombreclienteid = '"   + nombreclienteid + "'";
 
         try {
 
             PreparedStatement pst;
 
             try {
-
-                Statement miStatementIns = myConnection.createStatement();
+                
                 pst = myConnection.prepareStatement(sql);
                 pst.executeUpdate();
 
@@ -568,8 +585,8 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            PreparedStatement pst = myConnection.prepareStatement("DELETE FROM PDF "
-                    + "WHERE id = '" + idPdf + "'");
+            PreparedStatement pst = myConnection.prepareStatement(
+                "DELETE FROM PDF WHERE id = '" + idPdf + "'");
             pst.executeUpdate();
 
         } catch (SQLException e) {
@@ -589,8 +606,8 @@ public final class UI extends javax.swing.JFrame {
 
         try {
             
-            PreparedStatement pst = myConecction.prepareStatement("DELETE FROM PDF "
-                    + "WHERE nombreclienteid = '" + nombreclienteid + "'");
+            PreparedStatement pst = myConecction.prepareStatement(
+                "DELETE FROM PDF WHERE nombreclienteid = '" + nombreclienteid + "'");
             pst.executeUpdate();
 
         } catch (SQLException e) {
@@ -613,9 +630,10 @@ public final class UI extends javax.swing.JFrame {
 
         try {
             
-            Statement miStatement = myConecction.createStatement();
-            PreparedStatement pstmt = myConecction.prepareStatement("INSERT INTO Obligaciones"
-                    + " (nombreclienteid, nombrecliente, obligacion, fecha, hora, send) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement pstmt = myConecction.prepareStatement(
+                "INSERT INTO Obligaciones"
+                + " (nombreclienteid, nombrecliente, obligacion, fecha, hora, send) VALUES (?, ?, ?, ?, ?, ?)");
+            
             pstmt.setString(1, lblIDCustomers.getText() + lblNameShowC.getText());
             pstmt.setString(2, lblNameShowC.getText());
             pstmt.setString(3, obligacionI);
@@ -644,10 +662,12 @@ public final class UI extends javax.swing.JFrame {
 
         try {
 
-            Statement miStatement = myConnection.createStatement();
-            ResultSet miRs = miStatement.executeQuery("SELECT * FROM Obligaciones "
-                    + "WHERE nombreclienteid = '" + nombreClienteId + "'");
-            int iterator3 = 1;
+            Statement stmt = myConnection.createStatement();
+            ResultSet resultSet = stmt.executeQuery(
+                "SELECT * FROM Obligaciones "
+                + "WHERE nombreclienteid = '"   + nombreClienteId + "'");
+            
+            int iterator = 1;
 
             try (FileReader reader = new FileReader("config.properties")) {
 
@@ -655,32 +675,43 @@ public final class UI extends javax.swing.JFrame {
                 properties.load(reader);
                 txtEmailAEnviar.setText(properties.getProperty("correo"));
 
-                while (miRs.next()) {
+                while (resultSet.next()) {
 
-                    Obligation personObligacion = new Obligation(miRs.getInt("id"), miRs.getString("nombrecliente"), miRs.getString("obligacion"),
-                            miRs.getString("fecha"), miRs.getString("hora"), miRs.getString("send"));
+                    Obligation personObligacion 
+                        = new Obligation(
+                                resultSet.getInt("id"), 
+                                resultSet.getString("nombrecliente"), 
+                                resultSet.getString("obligacion"),
+                                resultSet.getString("fecha"), 
+                                resultSet.getString("hora"), 
+                                resultSet.getString("send"));
+                    
                     ObligationAction personObliAction = new ObligationAction(UI.this, personObligacion);
 
                     CustomButton personButtonLoad = new CustomButton(personObliAction);
-
-                    if (miRs.getString("send").equals("sent")) {
-
-                        personButtonLoad.setForeground(new Color(211, 0, 3));
-
-                    } else if (miRs.getString("send").equals("notsent")) {
-
-                        personButtonLoad.setForeground(new Color(13, 193, 67));
-
+                    
+                    switch (resultSet.getString("send")) {
+                        case "sent":
+                            personButtonLoad.setForeground(new Color(211, 0, 3));
+                            break;
+                            
+                        case "notsent":
+                            personButtonLoad.setForeground(new Color(13, 193, 67));
+                            break;
                     }
                     
-                    personButtonLoad.setText(miRs.getString("obligacion")
-                            + " (" + miRs.getString("fecha") + ")");
+                    personButtonLoad.setText(
+                            resultSet.getString("obligacion")
+                            + " (" + resultSet.getString("fecha") + ")");
+                    
                     GridBagConstraints c = new GridBagConstraints();
-                    iterator3++;
+                    
+                    iterator++;
+                    
                     c.fill = GridBagConstraints.HORIZONTAL;
                     c.weightx = 2.0;
                     c.insets = new Insets(3, 10, 3, 10);
-                    c.gridy = iterator3;
+                    c.gridy = iterator;
                     pnlBandejaObligaciones.add(personButtonLoad, c);
                     pnlBandejaObligaciones.revalidate();
                     pnlBandejaObligaciones.repaint();
@@ -706,13 +737,15 @@ public final class UI extends javax.swing.JFrame {
      */
     public void loadPopupPnl(Connection myConnection, int id) throws SQLException {
 
-        try (Statement miStatement = myConnection.createStatement();
-                ResultSet miRs = miStatement.executeQuery("SELECT * FROM Obligaciones "
-                        + "WHERE id = '" + id + "'");) {
+        try (Statement stmt = myConnection.createStatement();
+                ResultSet resultSet 
+                        = stmt.executeQuery(
+                        "SELECT * FROM Obligaciones WHERE id = '" + id + "'");) {
 
-            pnlTxtShowObligacion.setText(miRs.getString("obligacion"));
-            lblIDObligacion.setText(String.valueOf(miRs.getInt("id")));
-            String send = miRs.getString("send");
+            pnlTxtShowObligacion.setText(resultSet.getString("obligacion"));
+            lblIDObligacion.setText(String.valueOf(resultSet.getInt("id")));
+            
+            String send = resultSet.getString("send");
 
             if (send.equals("sent")) {
 
@@ -728,8 +761,8 @@ public final class UI extends javax.swing.JFrame {
 
             }
 
-            lblShowFecha.setText(miRs.getString("fecha"));
-            lblShowHora.setText(miRs.getString("hora"));
+            lblShowFecha.setText(resultSet.getString("fecha"));
+            lblShowHora.setText(resultSet.getString("hora"));
             dialogObligacion.setLocationRelativeTo(pnlBoxShowC);
             
         } catch (Exception e) {
@@ -750,8 +783,8 @@ public final class UI extends javax.swing.JFrame {
 
         try {
             
-            PreparedStatement pst = myConecction.prepareStatement("DELETE FROM Obligaciones "
-                    + "WHERE id = '" + id + "'");
+            PreparedStatement pst = myConecction.prepareStatement(
+                "DELETE FROM Obligaciones WHERE id = '" + id + "'");
             pst.executeUpdate();
 
         } catch (SQLException e) {
@@ -771,8 +804,8 @@ public final class UI extends javax.swing.JFrame {
 
         try {
             
-            PreparedStatement pst = myConecction.prepareStatement("DELETE FROM Obligaciones "
-                    + "WHERE nombreclienteid = '" + nombreclienteid + "'");
+            PreparedStatement pst = myConecction.prepareStatement(
+                "DELETE FROM Obligaciones WHERE nombreclienteid = '" + nombreclienteid + "'");
             pst.executeUpdate();
 
         } catch (SQLException e) {
@@ -789,7 +822,10 @@ public final class UI extends javax.swing.JFrame {
      * @param id
      * @throws SQLException
      * @throws ClassNotFoundException
+     * public void UpdateObligation
+     * @throws java.text.ParseException
      */
+    
     public void UpdateObligation(Connection myConecction, int id) throws SQLException, ClassNotFoundException, ParseException {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -801,36 +837,27 @@ public final class UI extends javax.swing.JFrame {
 
         if (!checkDate.equals(dateEdited)) {
 
-            updateObligationSendingOrNot(MyConnection.get(), idObligaciones, "notsent");
+            updateObligationSendingOrNot(MyConnection.get(), obligationID, "notsent");
 
         }
 
         String sql = "UPDATE Obligaciones SET "
-                + "obligacion ='" + pnlTxtShowObligacionEditar.getText() + "' "
-                + ",fecha ='" + userDateEdited + "' "
-                + ",hora ='" + userTimeEdited + "' "
-                + "WHERE id = '" + id + "'";
+                + "obligacion ='"   + pnlTxtShowObligacionEditar.getText() + "' "
+                + ",fecha ='"       + userDateEdited + "' "
+                + ",hora ='"        + userTimeEdited + "' "
+                + "WHERE id = '"    + id + "'";
 
         try {
 
-            PreparedStatement pst;
+            PreparedStatement pstmt;
+            pstmt = myConecction.prepareStatement(sql);
+            pstmt.executeUpdate();
 
-            try {
+        } catch (SQLException ex) {
 
-                Statement miStatementIns = myConecction.createStatement();
-                pst = myConecction.prepareStatement(sql);
-                pst.executeUpdate();
+            Logger.getLogger(JTable.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "ERROR AL ACTUALIZAR " + ex);
 
-            } catch (SQLException ex) {
-
-                Logger.getLogger(JTable.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, "ERROR AL ACTUALIZAR " + ex);
-
-            }
-        } catch (HeadlessException e) {
-            
-            //Do nothing
-            
         }
     }
 
@@ -845,61 +872,41 @@ public final class UI extends javax.swing.JFrame {
     public void updateObligationSendingOrNot(Connection myConnection, int id, String send) {
 
         String sql = "UPDATE Obligaciones SET "
-                + "send ='" + send + "' "
-                + "WHERE id = '" + id + "'";
-
+                + "send = '"        + send + "' "
+                + "WHERE id = '"    + id + "'";
+        
         try {
 
-            PreparedStatement pst;
+            PreparedStatement pstmt;
+            pstmt = myConnection.prepareStatement(sql);
+            pstmt.executeUpdate();
 
-            try {
+        } catch (SQLException ex) {
 
-                Statement miStatementIns = myConnection.createStatement();
-                pst = myConnection.prepareStatement(sql);
-                pst.executeUpdate();
+            Logger.getLogger(JTable.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "ERROR AL ACTUALIZAR " + ex);
 
-            } catch (SQLException ex) {
-
-                Logger.getLogger(JTable.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, "ERROR AL ACTUALIZAR " + ex);
-
-            }
-
-        } catch (HeadlessException e) {
-            
-            //Do nothing
-            
         }
     }
 
     public void updateObligationWithName(Connection myConnection, String nombreclienteid, String nuevonombre) {
 
         String sql = "UPDATE Obligaciones SET "
-                + "nombrecliente ='" + nuevonombre + "', "
-                + "nombreclienteid ='" + lblIDCustomers.getText() + nuevonombre + "' "
-                + "WHERE nombreclienteid = '" + nombreclienteid + "'";
-
+                + "nombrecliente = '"           + nuevonombre + "', "
+                + "nombreclienteid = '"         + lblIDCustomers.getText() + nuevonombre + "' "
+                + "WHERE nombreclienteid = '"   + nombreclienteid + "'";
+        
         try {
 
-            PreparedStatement pst;
+            PreparedStatement pstmt;
+            pstmt = myConnection.prepareStatement(sql);
+            pstmt.executeUpdate();
 
-            try {
+        } catch (SQLException ex) {
 
-                Statement miStatementIns = myConnection.createStatement();
-                pst = myConnection.prepareStatement(sql);
-                pst.executeUpdate();
+            Logger.getLogger(JTable.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "ERROR AL ACTUALIZAR " + ex);
 
-            } catch (SQLException ex) {
-
-                Logger.getLogger(JTable.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, "ERROR AL ACTUALIZAR " + ex);
-
-            }
-
-        } catch (HeadlessException e) {
-            
-            //Do nothing
-            
         }
     }
 
@@ -919,7 +926,7 @@ public final class UI extends javax.swing.JFrame {
             try {
 
                 Statement stmt = myConnection.createStatement();
-                ResultSet miRs = stmt.executeQuery(sql);
+                ResultSet resultSet = stmt.executeQuery(sql);
 
                 Calendar calendarioNow = Calendar.getInstance();
                 SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm:ss");
@@ -929,17 +936,17 @@ public final class UI extends javax.swing.JFrame {
                 lblTime.setText(time);
                 dayShow.setCalendar(calendarioNow);
 
-                while (miRs.next()) {
+                while (resultSet.next()) {
 
                     SimpleDateFormat formatterDate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
                     Calendar calendario = Calendar.getInstance();
 
                     String nombreCliente, obligacion, fecha, hora, send;
-                    nombreCliente = miRs.getString("nombrecliente");
-                    obligacion = miRs.getString("obligacion");
-                    fecha = miRs.getString("fecha");
-                    hora = miRs.getString("hora");
-                    send = miRs.getString("send");
+                    nombreCliente = resultSet.getString("nombrecliente");
+                    obligacion = resultSet.getString("obligacion");
+                    fecha = resultSet.getString("fecha");
+                    hora = resultSet.getString("hora");
+                    send = resultSet.getString("send");
 
                     try {
 
@@ -958,11 +965,11 @@ public final class UI extends javax.swing.JFrame {
                         if (dateUser.before(dateNow)) {
 
                             updateObligationSendingOrNot(MyConnection.get(),
-                                    miRs.getInt("id"), "sent");
+                                    resultSet.getInt("id"), "sent");
 
                             pnlBandejaObligaciones.removeAll();
                             loadPnlObligacion(MyConnection.get(), lblIDCustomers.getText() + lblNameShowC.getText());
-                            loadPopupPnl(MyConnection.get(), idObligaciones);
+                            loadPopupPnl(MyConnection.get(), obligationID);
                             dialogObligacion.revalidate();
                             dialogObligacion.repaint();
                             String titulo = "Obligacion con: " + nombreCliente;
@@ -975,6 +982,7 @@ public final class UI extends javax.swing.JFrame {
                         }
                     }
                 }
+                
             } catch (SQLException ev) {
                 
                 
@@ -1247,7 +1255,7 @@ public final class UI extends javax.swing.JFrame {
         btnReturnNewC.setBorder(null);
         btnReturnNewC.setBorderPainted(false);
         btnReturnNewC.setContentAreaFilled(false);
-        btnReturnNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnReturnNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnReturnNewC.setFocusPainted(false);
         btnReturnNewC.setFocusable(false);
         btnReturnNewC.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Back_To_28px_2.png"))); // NOI18N
@@ -1295,7 +1303,7 @@ public final class UI extends javax.swing.JFrame {
         btnGuardarNewC.setBorder(null);
         btnGuardarNewC.setBorderPainted(false);
         btnGuardarNewC.setContentAreaFilled(false);
-        btnGuardarNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardarNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnGuardarNewC.setFocusPainted(false);
         btnGuardarNewC.setFocusable(false);
         btnGuardarNewC.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Save_22px_1.png"))); // NOI18N
@@ -1318,7 +1326,7 @@ public final class UI extends javax.swing.JFrame {
         btnCancelarNewC.setBorder(null);
         btnCancelarNewC.setBorderPainted(false);
         btnCancelarNewC.setContentAreaFilled(false);
-        btnCancelarNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancelarNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCancelarNewC.setFocusPainted(false);
         btnCancelarNewC.setFocusable(false);
         btnCancelarNewC.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Cancel_22px.png"))); // NOI18N
@@ -1353,7 +1361,7 @@ public final class UI extends javax.swing.JFrame {
         btnInformacionNewC.setText("    Informacion");
         btnInformacionNewC.setBorderPainted(false);
         btnInformacionNewC.setContentAreaFilled(false);
-        btnInformacionNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnInformacionNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnInformacionNewC.setFocusPainted(false);
         btnInformacionNewC.setFocusable(false);
         btnInformacionNewC.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -1388,7 +1396,7 @@ public final class UI extends javax.swing.JFrame {
         txtContraseñaMuniPaNewC.setToolTipText("");
         txtContraseñaMuniPaNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtContraseñaMuniPaNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtContraseñaMuniPaNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtContraseñaMuniPaNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtContraseñaMuniPaNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtContraseñaMuniPaNewC.setPreferredSize(new java.awt.Dimension(0, 30));
         txtContraseñaMuniPaNewC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
@@ -1424,7 +1432,7 @@ public final class UI extends javax.swing.JFrame {
         txtNoContribuyenteNewC.setToolTipText("");
         txtNoContribuyenteNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNoContribuyenteNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNoContribuyenteNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNoContribuyenteNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNoContribuyenteNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNoContribuyenteNewC.setNextFocusableComponent(txtContraseñaMuniPaNewC);
         txtNoContribuyenteNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1446,7 +1454,7 @@ public final class UI extends javax.swing.JFrame {
         txtNitNewC.setToolTipText("");
         txtNitNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNitNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNitNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNitNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNitNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNitNewC.setNextFocusableComponent(txtNoContribuyenteNewC);
         txtNitNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1515,7 +1523,7 @@ public final class UI extends javax.swing.JFrame {
         txtNombreContactoNewC.setToolTipText("");
         txtNombreContactoNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNombreContactoNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNombreContactoNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNombreContactoNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNombreContactoNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNombreContactoNewC.setNextFocusableComponent(txtCorreoNewC);
         txtNombreContactoNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1537,7 +1545,7 @@ public final class UI extends javax.swing.JFrame {
         txtCorreoNewC.setToolTipText("");
         txtCorreoNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtCorreoNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtCorreoNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCorreoNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtCorreoNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtCorreoNewC.setNextFocusableComponent(txtNumeroContactoNewC);
         txtCorreoNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1575,7 +1583,7 @@ public final class UI extends javax.swing.JFrame {
         txtRepLegalNewC.setToolTipText("");
         txtRepLegalNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtRepLegalNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtRepLegalNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtRepLegalNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtRepLegalNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtRepLegalNewC.setNextFocusableComponent(txtNombreContactoNewC);
         txtRepLegalNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1613,7 +1621,7 @@ public final class UI extends javax.swing.JFrame {
         txtRucNewC.setToolTipText("");
         txtRucNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtRucNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtRucNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtRucNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtRucNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtRucNewC.setNextFocusableComponent(txtRepLegalNewC);
         txtRucNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1635,7 +1643,7 @@ public final class UI extends javax.swing.JFrame {
         txtCedulaRepNewC.setToolTipText("");
         txtCedulaRepNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtCedulaRepNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtCedulaRepNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCedulaRepNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtCedulaRepNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtCedulaRepNewC.setNextFocusableComponent(txtNitNewC);
         txtCedulaRepNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1689,7 +1697,7 @@ public final class UI extends javax.swing.JFrame {
         txtNumeroContactoNewC.setToolTipText("");
         txtNumeroContactoNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNumeroContactoNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNumeroContactoNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNumeroContactoNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNumeroContactoNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNumeroContactoNewC.setNextFocusableComponent(txtCedulaRepNewC);
         txtNumeroContactoNewC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -1739,7 +1747,7 @@ public final class UI extends javax.swing.JFrame {
         txtNombreNewC.setToolTipText("");
         txtNombreNewC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNombreNewC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNombreNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNombreNewC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNombreNewC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNombreNewC.setNextFocusableComponent(txtRucNewC);
         txtNombreNewC.setPreferredSize(new java.awt.Dimension(0, 20));
@@ -1821,7 +1829,7 @@ public final class UI extends javax.swing.JFrame {
         btnReturnShowC.setBorder(null);
         btnReturnShowC.setBorderPainted(false);
         btnReturnShowC.setContentAreaFilled(false);
-        btnReturnShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnReturnShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnReturnShowC.setFocusPainted(false);
         btnReturnShowC.setFocusable(false);
         btnReturnShowC.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Back_To_28px_2.png"))); // NOI18N
@@ -1870,7 +1878,7 @@ public final class UI extends javax.swing.JFrame {
         btnEditarShowC.setBorder(null);
         btnEditarShowC.setBorderPainted(false);
         btnEditarShowC.setContentAreaFilled(false);
-        btnEditarShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditarShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnEditarShowC.setFocusPainted(false);
         btnEditarShowC.setFocusable(false);
         btnEditarShowC.setPreferredSize(new java.awt.Dimension(73, 30));
@@ -1894,7 +1902,7 @@ public final class UI extends javax.swing.JFrame {
         btnEliminarShowC.setBorder(null);
         btnEliminarShowC.setBorderPainted(false);
         btnEliminarShowC.setContentAreaFilled(false);
-        btnEliminarShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEliminarShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnEliminarShowC.setFocusPainted(false);
         btnEliminarShowC.setFocusable(false);
         btnEliminarShowC.setPreferredSize(new java.awt.Dimension(88, 30));
@@ -1918,7 +1926,7 @@ public final class UI extends javax.swing.JFrame {
         btnGuardarCambiosShowC.setBorder(null);
         btnGuardarCambiosShowC.setBorderPainted(false);
         btnGuardarCambiosShowC.setContentAreaFilled(false);
-        btnGuardarCambiosShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardarCambiosShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnGuardarCambiosShowC.setEnabled(false);
         btnGuardarCambiosShowC.setFocusPainted(false);
         btnGuardarCambiosShowC.setFocusable(false);
@@ -1943,7 +1951,7 @@ public final class UI extends javax.swing.JFrame {
         btnCancelarShowC.setBorder(null);
         btnCancelarShowC.setBorderPainted(false);
         btnCancelarShowC.setContentAreaFilled(false);
-        btnCancelarShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancelarShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCancelarShowC.setEnabled(false);
         btnCancelarShowC.setFocusPainted(false);
         btnCancelarShowC.setFocusable(false);
@@ -1968,7 +1976,7 @@ public final class UI extends javax.swing.JFrame {
         btnGuardarPdfShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnGuardarPdfShowC.setBorderPainted(false);
         btnGuardarPdfShowC.setContentAreaFilled(false);
-        btnGuardarPdfShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardarPdfShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnGuardarPdfShowC.setEnabled(false);
         btnGuardarPdfShowC.setFocusable(false);
         btnGuardarPdfShowC.setPreferredSize(new java.awt.Dimension(123, 30));
@@ -1992,7 +2000,7 @@ public final class UI extends javax.swing.JFrame {
         btnCancelarPdfShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnCancelarPdfShowC.setBorderPainted(false);
         btnCancelarPdfShowC.setContentAreaFilled(false);
-        btnCancelarPdfShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancelarPdfShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCancelarPdfShowC.setEnabled(false);
         btnCancelarPdfShowC.setFocusable(false);
         btnCancelarPdfShowC.setPreferredSize(new java.awt.Dimension(97, 30));
@@ -2016,7 +2024,7 @@ public final class UI extends javax.swing.JFrame {
         btnGuardarObligacionShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnGuardarObligacionShowC.setBorderPainted(false);
         btnGuardarObligacionShowC.setContentAreaFilled(false);
-        btnGuardarObligacionShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardarObligacionShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnGuardarObligacionShowC.setEnabled(false);
         btnGuardarObligacionShowC.setFocusable(false);
         btnGuardarObligacionShowC.setPreferredSize(new java.awt.Dimension(171, 30));
@@ -2054,7 +2062,7 @@ public final class UI extends javax.swing.JFrame {
         btnInformacionShowC.setText("    Informacion");
         btnInformacionShowC.setBorderPainted(false);
         btnInformacionShowC.setContentAreaFilled(false);
-        btnInformacionShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnInformacionShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnInformacionShowC.setFocusPainted(false);
         btnInformacionShowC.setFocusable(false);
         btnInformacionShowC.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -2080,7 +2088,7 @@ public final class UI extends javax.swing.JFrame {
         btnAvisoDeOperacionesShowC.setText("Aviso de Operaciones");
         btnAvisoDeOperacionesShowC.setBorderPainted(false);
         btnAvisoDeOperacionesShowC.setContentAreaFilled(false);
-        btnAvisoDeOperacionesShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAvisoDeOperacionesShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnAvisoDeOperacionesShowC.setFocusPainted(false);
         btnAvisoDeOperacionesShowC.setFocusable(false);
         btnAvisoDeOperacionesShowC.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -2104,7 +2112,7 @@ public final class UI extends javax.swing.JFrame {
         btnObligacionesFiscalesShowC.setText("Obligaciones Fiscales");
         btnObligacionesFiscalesShowC.setBorderPainted(false);
         btnObligacionesFiscalesShowC.setContentAreaFilled(false);
-        btnObligacionesFiscalesShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnObligacionesFiscalesShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnObligacionesFiscalesShowC.setFocusPainted(false);
         btnObligacionesFiscalesShowC.setFocusable(false);
         btnObligacionesFiscalesShowC.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -2147,7 +2155,7 @@ public final class UI extends javax.swing.JFrame {
         txtContraseñaMuniPaShowC.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtContraseñaMuniPaShowC.setToolTipText("");
         txtContraseñaMuniPaShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtContraseñaMuniPaShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtContraseñaMuniPaShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtContraseñaMuniPaShowC.setOpaque(false);
         txtContraseñaMuniPaShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtContraseñaMuniPaShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2182,7 +2190,7 @@ public final class UI extends javax.swing.JFrame {
         txtNoContribuyenteShowC.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtNoContribuyenteShowC.setToolTipText("");
         txtNoContribuyenteShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtNoContribuyenteShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNoContribuyenteShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNoContribuyenteShowC.setOpaque(false);
         txtNoContribuyenteShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtNoContribuyenteShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2201,7 +2209,7 @@ public final class UI extends javax.swing.JFrame {
         txtNitShowC.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtNitShowC.setToolTipText("");
         txtNitShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtNitShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNitShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNitShowC.setOpaque(false);
         txtNitShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtNitShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2269,7 +2277,7 @@ public final class UI extends javax.swing.JFrame {
         txtNombreContactoShowC.setText("vkvlubvylbg");
         txtNombreContactoShowC.setToolTipText("");
         txtNombreContactoShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtNombreContactoShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNombreContactoShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNombreContactoShowC.setOpaque(false);
         txtNombreContactoShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtNombreContactoShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2288,7 +2296,7 @@ public final class UI extends javax.swing.JFrame {
         txtCorreoContactoShowC.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtCorreoContactoShowC.setToolTipText("");
         txtCorreoContactoShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtCorreoContactoShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCorreoContactoShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtCorreoContactoShowC.setOpaque(false);
         txtCorreoContactoShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtCorreoContactoShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2324,7 +2332,7 @@ public final class UI extends javax.swing.JFrame {
         txtRepLegalShowC.setText("sadawfgagwshg<h");
         txtRepLegalShowC.setToolTipText("");
         txtRepLegalShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtRepLegalShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtRepLegalShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtRepLegalShowC.setOpaque(false);
         txtRepLegalShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtRepLegalShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2360,7 +2368,7 @@ public final class UI extends javax.swing.JFrame {
         txtRucShowC.setText("adawdwad");
         txtRucShowC.setToolTipText("");
         txtRucShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtRucShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtRucShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtRucShowC.setOpaque(false);
         txtRucShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtRucShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2380,7 +2388,7 @@ public final class UI extends javax.swing.JFrame {
         txtCedulaRepLegalShowC.setText("dwawgfagagwa");
         txtCedulaRepLegalShowC.setToolTipText("");
         txtCedulaRepLegalShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtCedulaRepLegalShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCedulaRepLegalShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtCedulaRepLegalShowC.setOpaque(false);
         txtCedulaRepLegalShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtCedulaRepLegalShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2430,7 +2438,7 @@ public final class UI extends javax.swing.JFrame {
         txtNumeroContactoShowC.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtNumeroContactoShowC.setToolTipText("");
         txtNumeroContactoShowC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
-        txtNumeroContactoShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNumeroContactoShowC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNumeroContactoShowC.setOpaque(false);
         txtNumeroContactoShowC.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         txtNumeroContactoShowC.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -2513,7 +2521,7 @@ public final class UI extends javax.swing.JFrame {
         txtContraseñaEditC.setToolTipText("");
         txtContraseñaEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtContraseñaEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtContraseñaEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtContraseñaEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtContraseñaEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtContraseñaEditC.setNextFocusableComponent(txtNombreEditC);
         txtContraseñaEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2550,7 +2558,7 @@ public final class UI extends javax.swing.JFrame {
         txtNoContribuyenteEditC.setToolTipText("");
         txtNoContribuyenteEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNoContribuyenteEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNoContribuyenteEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNoContribuyenteEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNoContribuyenteEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNoContribuyenteEditC.setNextFocusableComponent(txtContraseñaEditC);
         txtNoContribuyenteEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2572,7 +2580,7 @@ public final class UI extends javax.swing.JFrame {
         txtNitEditC.setToolTipText("");
         txtNitEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNitEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNitEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNitEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNitEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNitEditC.setNextFocusableComponent(txtNoContribuyenteEditC);
         txtNitEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2641,7 +2649,7 @@ public final class UI extends javax.swing.JFrame {
         txtNombreContactoEditC.setToolTipText("");
         txtNombreContactoEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNombreContactoEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNombreContactoEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNombreContactoEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNombreContactoEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNombreContactoEditC.setNextFocusableComponent(txtCorreoEditC);
         txtNombreContactoEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2663,7 +2671,7 @@ public final class UI extends javax.swing.JFrame {
         txtCorreoEditC.setToolTipText("");
         txtCorreoEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtCorreoEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtCorreoEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCorreoEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtCorreoEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtCorreoEditC.setNextFocusableComponent(txtNumeroContactoEditC);
         txtCorreoEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2701,7 +2709,7 @@ public final class UI extends javax.swing.JFrame {
         txtRepLegalEditC.setToolTipText("");
         txtRepLegalEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtRepLegalEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtRepLegalEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtRepLegalEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtRepLegalEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtRepLegalEditC.setNextFocusableComponent(txtNombreContactoEditC);
         txtRepLegalEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2739,7 +2747,7 @@ public final class UI extends javax.swing.JFrame {
         txtRucEditC.setToolTipText("");
         txtRucEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtRucEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtRucEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtRucEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtRucEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtRucEditC.setNextFocusableComponent(txtRepLegalEditC);
         txtRucEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2761,7 +2769,7 @@ public final class UI extends javax.swing.JFrame {
         txtCedulaRepEditC.setToolTipText("");
         txtCedulaRepEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtCedulaRepEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtCedulaRepEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtCedulaRepEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtCedulaRepEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtCedulaRepEditC.setNextFocusableComponent(txtNitEditC);
         txtCedulaRepEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2815,7 +2823,7 @@ public final class UI extends javax.swing.JFrame {
         txtNumeroContactoEditC.setToolTipText("");
         txtNumeroContactoEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNumeroContactoEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNumeroContactoEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNumeroContactoEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNumeroContactoEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNumeroContactoEditC.setNextFocusableComponent(txtCedulaRepEditC);
         txtNumeroContactoEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2866,7 +2874,7 @@ public final class UI extends javax.swing.JFrame {
         txtNombreEditC.setToolTipText("");
         txtNombreEditC.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
         txtNombreEditC.setCaretColor(new java.awt.Color(211, 0, 3));
-        txtNombreEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNombreEditC.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         txtNombreEditC.setMinimumSize(new java.awt.Dimension(0, 20));
         txtNombreEditC.setNextFocusableComponent(txtRucEditC);
         txtNombreEditC.setPreferredSize(new java.awt.Dimension(0, 30));
@@ -2918,7 +2926,7 @@ public final class UI extends javax.swing.JFrame {
         lblAvisosDeOperacionesHelp.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         lblAvisosDeOperacionesHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Help_28px.png"))); // NOI18N
         lblAvisosDeOperacionesHelp.setText("Ayuda");
-        lblAvisosDeOperacionesHelp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblAvisosDeOperacionesHelp.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblAvisosDeOperacionesHelp.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblAvisosDeOperacionesHelpMouseClicked(evt);
@@ -2966,7 +2974,7 @@ public final class UI extends javax.swing.JFrame {
         btnSeleccionarPdf.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnSeleccionarPdf.setBorderPainted(false);
         btnSeleccionarPdf.setContentAreaFilled(false);
-        btnSeleccionarPdf.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSeleccionarPdf.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnSeleccionarPdf.setFocusPainted(false);
         btnSeleccionarPdf.setFocusable(false);
         btnSeleccionarPdf.setMaximumSize(new java.awt.Dimension(107, 25));
@@ -3138,7 +3146,7 @@ public final class UI extends javax.swing.JFrame {
 
         lblObligacionesFiscalesHelper.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Help_28px.png"))); // NOI18N
         lblObligacionesFiscalesHelper.setText("Ayuda");
-        lblObligacionesFiscalesHelper.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblObligacionesFiscalesHelper.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblObligacionesFiscalesHelper.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         lblObligacionesFiscalesHelper.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -3153,7 +3161,7 @@ public final class UI extends javax.swing.JFrame {
         pnlObligacionesFiscales.add(lblObligacionesFiscalesHelper, gridBagConstraints);
 
         lblConfigEmail.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Settings_28px.png"))); // NOI18N
-        lblConfigEmail.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblConfigEmail.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblConfigEmail.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         lblConfigEmail.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -3247,7 +3255,7 @@ public final class UI extends javax.swing.JFrame {
         btnCloseDialog.setBorder(null);
         btnCloseDialog.setBorderPainted(false);
         btnCloseDialog.setContentAreaFilled(false);
-        btnCloseDialog.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCloseDialog.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCloseDialog.setFocusPainted(false);
         btnCloseDialog.setFocusable(false);
         btnCloseDialog.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3292,7 +3300,7 @@ public final class UI extends javax.swing.JFrame {
         pnlTxtShowObligacion.setEditable(false);
         pnlTxtShowObligacion.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         pnlTxtShowObligacion.setCaretColor(new java.awt.Color(211, 0, 3));
-        pnlTxtShowObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        pnlTxtShowObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnlTxtShowObligacion.setMargin(new java.awt.Insets(5, 5, 5, 5));
         pnlTxtShowObligacion.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         pnlTxtShowObligacion.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -3317,7 +3325,7 @@ public final class UI extends javax.swing.JFrame {
         btnObligacionCompletada.setBackground(new java.awt.Color(255, 255, 255));
         btnObligacionCompletada.setBorderPainted(false);
         btnObligacionCompletada.setContentAreaFilled(false);
-        btnObligacionCompletada.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnObligacionCompletada.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnObligacionCompletada.setFocusPainted(false);
         btnObligacionCompletada.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnObligacionCompletada.setForeground(new java.awt.Color(13, 193, 67));
@@ -3334,7 +3342,7 @@ public final class UI extends javax.swing.JFrame {
         btnEditarObligacion.setBackground(new java.awt.Color(255, 255, 255));
         btnEditarObligacion.setBorderPainted(false);
         btnEditarObligacion.setContentAreaFilled(false);
-        btnEditarObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditarObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnEditarObligacion.setFocusPainted(false);
         btnEditarObligacion.setFocusable(false);
         btnEditarObligacion.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3417,7 +3425,7 @@ public final class UI extends javax.swing.JFrame {
         pnlTxtShowObligacionEditar.setBorder(null);
         pnlTxtShowObligacionEditar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         pnlTxtShowObligacionEditar.setCaretColor(new java.awt.Color(211, 0, 3));
-        pnlTxtShowObligacionEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        pnlTxtShowObligacionEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnlTxtShowObligacionEditar.setMargin(new java.awt.Insets(5, 5, 5, 5));
         pnlTxtShowObligacionEditar.setSelectedTextColor(new java.awt.Color(211, 0, 3));
         pnlTxtShowObligacionEditar.setSelectionColor(new java.awt.Color(255, 255, 255));
@@ -3440,7 +3448,7 @@ public final class UI extends javax.swing.JFrame {
         btnGuardarCambioObligacion.setBorder(null);
         btnGuardarCambioObligacion.setBorderPainted(false);
         btnGuardarCambioObligacion.setContentAreaFilled(false);
-        btnGuardarCambioObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardarCambioObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnGuardarCambioObligacion.setFocusPainted(false);
         btnGuardarCambioObligacion.setFocusable(false);
         btnGuardarCambioObligacion.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3458,7 +3466,7 @@ public final class UI extends javax.swing.JFrame {
         btnCancelarEditar.setBorder(null);
         btnCancelarEditar.setBorderPainted(false);
         btnCancelarEditar.setContentAreaFilled(false);
-        btnCancelarEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancelarEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCancelarEditar.setFocusPainted(false);
         btnCancelarEditar.setFocusable(false);
         btnCancelarEditar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3530,7 +3538,7 @@ public final class UI extends javax.swing.JFrame {
         btnCloseAboutMe.setBackground(new java.awt.Color(255, 255, 255));
         btnCloseAboutMe.setBorderPainted(false);
         btnCloseAboutMe.setContentAreaFilled(false);
-        btnCloseAboutMe.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCloseAboutMe.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCloseAboutMe.setFocusPainted(false);
         btnCloseAboutMe.setFocusable(false);
         btnCloseAboutMe.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3559,7 +3567,7 @@ public final class UI extends javax.swing.JFrame {
 
         lblShowWhatsapp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_WhatsApp_28px.png"))); // NOI18N
         lblShowWhatsapp.setText("<html><FONT COLOR=#40C351>Whatsapp: <br></FONT><FONT COLOR=#FFFFFF>+50762545505</FONT></html>");
-        lblShowWhatsapp.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblShowWhatsapp.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblShowWhatsapp.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblShowWhatsapp.setForeground(new java.awt.Color(255, 255, 255));
         lblShowWhatsapp.setToolTipText("Click para copiar la informacion");
@@ -3579,7 +3587,7 @@ public final class UI extends javax.swing.JFrame {
 
         lblMiCorreo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Gmail_28px.png"))); // NOI18N
         lblMiCorreo.setText("<html><FONT COLOR=#E95652>Correo:: <br></FONT><FONT COLOR=#F5F5F5>extibax@gmail.com</FONT></html>");
-        lblMiCorreo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblMiCorreo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblMiCorreo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblMiCorreo.setForeground(new java.awt.Color(255, 255, 255));
         lblMiCorreo.setToolTipText("Click para copiar la informacion");
@@ -3649,7 +3657,7 @@ public final class UI extends javax.swing.JFrame {
         btnCloseAvisoDeOperacionesHelper.setBackground(new java.awt.Color(255, 255, 255));
         btnCloseAvisoDeOperacionesHelper.setBorderPainted(false);
         btnCloseAvisoDeOperacionesHelper.setContentAreaFilled(false);
-        btnCloseAvisoDeOperacionesHelper.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCloseAvisoDeOperacionesHelper.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCloseAvisoDeOperacionesHelper.setFocusPainted(false);
         btnCloseAvisoDeOperacionesHelper.setFocusable(false);
         btnCloseAvisoDeOperacionesHelper.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3740,7 +3748,7 @@ public final class UI extends javax.swing.JFrame {
         btnClosePnlHelperObligaciones.setBackground(new java.awt.Color(255, 255, 255));
         btnClosePnlHelperObligaciones.setBorderPainted(false);
         btnClosePnlHelperObligaciones.setContentAreaFilled(false);
-        btnClosePnlHelperObligaciones.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnClosePnlHelperObligaciones.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnClosePnlHelperObligaciones.setFocusPainted(false);
         btnClosePnlHelperObligaciones.setFocusable(false);
         btnClosePnlHelperObligaciones.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3831,7 +3839,7 @@ public final class UI extends javax.swing.JFrame {
         btnCloseYGuardarCambiosObligacion.setBackground(new java.awt.Color(255, 255, 255));
         btnCloseYGuardarCambiosObligacion.setBorderPainted(false);
         btnCloseYGuardarCambiosObligacion.setContentAreaFilled(false);
-        btnCloseYGuardarCambiosObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCloseYGuardarCambiosObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCloseYGuardarCambiosObligacion.setFocusPainted(false);
         btnCloseYGuardarCambiosObligacion.setFocusable(false);
         btnCloseYGuardarCambiosObligacion.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3847,7 +3855,7 @@ public final class UI extends javax.swing.JFrame {
         btnCloseYCancelarCambiosObligacion.setBackground(new java.awt.Color(255, 255, 255));
         btnCloseYCancelarCambiosObligacion.setBorderPainted(false);
         btnCloseYCancelarCambiosObligacion.setContentAreaFilled(false);
-        btnCloseYCancelarCambiosObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCloseYCancelarCambiosObligacion.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnCloseYCancelarCambiosObligacion.setFocusPainted(false);
         btnCloseYCancelarCambiosObligacion.setFocusable(false);
         btnCloseYCancelarCambiosObligacion.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -3965,7 +3973,7 @@ public final class UI extends javax.swing.JFrame {
         btnNuevoCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Add_User_Group_Man_Man_28px.png"))); // NOI18N
         btnNuevoCliente.setText("Nuevo cliente");
         btnNuevoCliente.setContentAreaFilled(false);
-        btnNuevoCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnNuevoCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnNuevoCliente.setFocusPainted(false);
         btnNuevoCliente.setFocusable(false);
         btnNuevoCliente.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-add-user-group-man-man-22.png"))); // NOI18N
@@ -4014,7 +4022,7 @@ public final class UI extends javax.swing.JFrame {
         btnSearch.setBorder(null);
         btnSearch.setBorderPainted(false);
         btnSearch.setContentAreaFilled(false);
-        btnSearch.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSearch.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnSearch.setFocusPainted(false);
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4032,7 +4040,7 @@ public final class UI extends javax.swing.JFrame {
         btnSearchCancel.setBorder(null);
         btnSearchCancel.setBorderPainted(false);
         btnSearchCancel.setContentAreaFilled(false);
-        btnSearchCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSearchCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnSearchCancel.setFocusPainted(false);
         btnSearchCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4141,7 +4149,7 @@ public final class UI extends javax.swing.JFrame {
         btnAboutMe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_Laptop_32px.png"))); // NOI18N
         btnAboutMe.setText("Acerca de..");
         btnAboutMe.setContentAreaFilled(false);
-        btnAboutMe.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAboutMe.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnAboutMe.setFocusable(false);
         btnAboutMe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4212,13 +4220,13 @@ public final class UI extends javax.swing.JFrame {
     private void btnEliminarShowCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarShowCActionPerformed
 
         int eleccion;
+        
         URL iconURL = getClass().getResource("/img/icons8_High_Priority_48px.png");
         ImageIcon icon = new ImageIcon(iconURL);
         eleccion = JOptionPane.showConfirmDialog(pnlJointShowC, "Se eliminara permanentemente, ¿Estas seguro?", "Eliminar Cliente", WIDTH, HEIGHT, icon);
+        
         switch (eleccion) {
             case 0:
-
-                String nameRemove;
 
                 try {
 
@@ -4589,13 +4597,13 @@ public final class UI extends javax.swing.JFrame {
     private void btnGuardarPdfShowCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarPdfShowCActionPerformed
 
         String nombre = txtNombrePdf.getText();
-        File ruta = new File(pathPdf);
-        if (nombre.trim().length() != 0 && pathPdf.trim().length() != 0) {
+        File ruta = new File(pdfPath);
+        if (nombre.trim().length() != 0 && pdfPath.trim().length() != 0) {
 
             try {
 
                 savePdf(nombre, ruta);
-                pathPdf = "";
+                pdfPath = "";
 
             } catch (SQLException | ClassNotFoundException ex) {
 
@@ -4860,7 +4868,7 @@ public final class UI extends javax.swing.JFrame {
 
                 case 0:
                     dialogObligacion.dispose();
-                    removeObligationWithId(MyConnection.get(), idObligaciones);
+                    removeObligationWithId(MyConnection.get(), obligationID);
                     btnObligacionesFiscalesShowC.doClick();
                     break;
                     

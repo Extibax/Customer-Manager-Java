@@ -43,9 +43,9 @@ public class ObligationAction extends AbstractAction{
             
             try {
                 
-                ui.idObligaciones = personObligacion.getId();
+                ui.obligationID = personObligacion.getId();
                 ui.dialogObligacion.setVisible(true);
-                ui.loadPopupPnl(MyConnection.get(), ui.idObligaciones);
+                ui.loadPopupPnl(MyConnection.get(), ui.obligationID);
                 
             }catch (ClassNotFoundException ex) {
                 
